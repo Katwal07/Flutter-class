@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "75290203854",
+    "project_id": "flutter-project-d7351",
+    "storage_bucket": "flutter-project-d7351.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75290203854:android:6fe1d875cb4a46253be29f",
+        "android_client_info": {
+          "package_name": "com.example.digital_pathshala_batch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_mgmqqGgWUIBwVEmvOnDdgcKg8LL_-RY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
