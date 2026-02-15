@@ -114,6 +114,12 @@ class _RegistrationScreenState extends State<LoginScreen> {
                 child: Text("OR", style: TextStyle(color: Colors.grey)),
               ),
               const SizedBox(height: 20),
+              //// Google icon download garne.
+              ///
+              OutlinedButton.icon(
+                onPressed: () => userController.loginWithGoogle(),
+                label: Text("Continue with google"),
+              ),
             ],
           ),
         ),
