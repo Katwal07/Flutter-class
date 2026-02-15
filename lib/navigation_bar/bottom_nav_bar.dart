@@ -18,7 +18,7 @@ class NavBarPage extends StatelessWidget {
       const PaginationProductScreen(),
       SearchScreen(),
       CartScreen(),
-      const ProfileScreen(),
+      ProfileScreen(),
     ];
     return Obx(
       () => Scaffold(
