@@ -1,5 +1,10 @@
+import 'package:digital_pathshala_batch/controller/image_picker_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../controller/create_profile_controller.dart';
+import '../model/create_profile_model.dart';
 
 class VehicleModel {
   final String id;
@@ -18,10 +23,17 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _datePickerController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nickNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+
   String _dob = '';
   bool isChecked = false;
 
   VehicleModel? selectedVehicle;
+
+  final controller = Get.put(CreateProfileController());
+  final imageController = Get.put(ImagePickerController());
 
   final List<VehicleModel> vehicles = [
     VehicleModel(id: '1', name: 'Car'),
@@ -33,6 +45,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     _datePickerController.dispose();
     _genderController.dispose();
+    _nameController.dispose();
+    _nickNameController.dispose();
+    _phoneNumberController.dispose();
     super.dispose();
   }
 
@@ -45,13 +60,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              /// DateTime Picker.
-              // CustomTextField(
-              //   controller: _datePickerController,
-              //   label: "Date Time",
-              //   prefixIcon: Icons.date_range,
-              //   keyboardType: TextInputType.datetime,
-              // ),
+              Obx(() {
+                return GestureDetector(
+                  onTap: imageController.pickImage,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 70,
+                        backgroundColor: CupertinoColors.systemGrey6,
+                        child: ClipOval(
+                          child: imageController.pickedImage.value != null
+                              ? Image.file(
+                                  imageController.pickedImage.value!,
+                                  width: 138,
+                                  height: 138,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  'assets/images/background_light_image.png',
+                                  width: 138,
+                                  height: 138,
+                                  fit: BoxFit.cover,
+                                ),
+                        ),
+                      ),
+                      if (imageController.isLoading.value)
+                        // Position -> Parent Widget -> Ko Posititon Track
+                        ///  top , bottom , left, right
+                        const Positioned(
+                          bottom: 0,
+                          right: 12,
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(strokeWidth: 3),
+                          ),
+                        ),
+                      if (!imageController.isLoading.value)
+                        const Positioned(
+                          bottom: 0,
+                          right: 12,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.blue,
+                            radius: 16,
+                            child: Icon(
+                              Icons.edit,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }),
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(hintText: "Full Name"),
+              ),
+              TextFormField(
+                controller: _nickNameController,
+                decoration: InputDecoration(hintText: "Nick Name"),
+              ),
+              TextFormField(
+                controller: _phoneNumberController,
+                decoration: InputDecoration(hintText: "Phone Number"),
+              ),
+
               TextFormField(
                 controller: _datePickerController,
                 onTap: () => _showDOBDatePicker(context),
@@ -112,9 +189,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 value: isChecked,
                 onChanged: (value) {
                   setState(() {
-                    isChecked = value!;
+                    isChecked = value;
                   });
                 },
+              ),
+
+              ElevatedButton(
+                onPressed: () async {
+                  final model = CreateProfileModel(
+                    id: "b30625e9-ac5e-4aeb-b864-5dd374330cca",
+                    fullName: "rohankatwal55@gmail.com",
+                    nickName: "Rohan",
+                    dateOfBirth: "1990-01-01",
+                    phoneNumber: "+977-9804979923",
+                    gender: "MALE",
+                    profileImage: imageController.pickedImage.value?.path,
+                  );
+
+                  await controller.createProfile(model);
+
+                  if (controller.isSuccess.value) {
+                    Get.snackbar("Success", "Profile created successfully");
+                  } else if (controller.errorMessage.value.isNotEmpty) {
+                    Get.snackbar("Error", controller.errorMessage.value);
+                  }
+                },
+                child: Obx(
+                  () => controller.isLoading.value
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("Create Profile"),
+                ),
               ),
             ],
           ),
